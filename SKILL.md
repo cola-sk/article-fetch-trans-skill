@@ -31,6 +31,19 @@ description: Extract an arbitrary article URL and translate it into Chinese Mark
 4. 将文章内容发送到本地 OpenAI 兼容接口（`/chat/completions`）进行翻译。
 5. 将翻译结果保存为 Markdown 到当前目录，文件名为文章标题（用 `-` 连接）。
 
+## 脚本路径说明
+
+- 建议使用 skill 目录的绝对路径执行脚本，避免因当前工作目录不同而找不到 `scripts/translate-article-skill.mjs`。
+- 可将 `SKILL.md` 所在目录作为 `skill_dir`。
+
+### 任意目录执行示例
+
+```bash
+# 已知 SKILL.md 绝对路径时：
+SKILL_DIR="$(cd "$(dirname "/abs/path/to/article-fetch-trans-skill/SKILL.md")" && pwd)"
+node "$SKILL_DIR/scripts/translate-article-skill.mjs" "https://example.com/article"
+```
+
 ## 决策点
 
 - 提取优先级：`article` > `main` > 常见内容容器（`article/post/content/blog/...`）> `body`。
@@ -59,7 +72,7 @@ PY
 - `fatal: CDP WS handshake failed: HTTP 403`：
   打开 `chrome://inspect/#remote-debugging`，在 Chrome 弹窗中点击 `Allow`，然后重新执行。
 - 默认会话仍异常时：
-  可切换会话名重试（例如 `BU_NAME=work node scripts/translate-article-skill.mjs <url>`），避免复用损坏的默认会话。
+  可切换会话名重试（例如 `BU_NAME=work node <skill_dir>/scripts/translate-article-skill.mjs <url>`），避免复用损坏的默认会话。
 - 页面提取到空内容：
   脚本已内置多次重试和 `main/body` 兜底；若仍失败，增大 `--timeoutMs`（如 `180000`）并确认目标页面已登录且可见正文。
 - 标题被识别为通用值（如 `X`）：
@@ -68,15 +81,15 @@ PY
 ## 使用示例
 
 ```bash
-node scripts/translate-article-skill.mjs https://x.com/akshay_pachaar/article/2041146899319971922
+node <skill_dir>/scripts/translate-article-skill.mjs https://x.com/akshay_pachaar/article/2041146899319971922
 ```
 
 ```bash
-node scripts/translate-article-skill.mjs https://example.com/blog/post/123 --model=gpt-5-mini
+node <skill_dir>/scripts/translate-article-skill.mjs https://example.com/blog/post/123 --model=gpt-5-mini
 ```
 
 ```bash
-node scripts/translate-article-skill.mjs https://example.com/post/123 --baseUrl=http://localhost:3001/v1 --timeoutMs=180000
+node <skill_dir>/scripts/translate-article-skill.mjs https://example.com/post/123 --baseUrl=http://localhost:3001/v1 --timeoutMs=180000
 ```
 
 默认输出到当前目录，文件名基于文章标题自动生成（`-` 连接）。

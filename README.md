@@ -18,19 +18,21 @@
 ## 快速使用
 
 ```bash
-node scripts/translate-article-skill.mjs <article-url>
+SKILL_DIR="/abs/path/to/article-fetch-trans-skill"
+node "$SKILL_DIR/scripts/translate-article-skill.mjs" <article-url>
 ```
 
 示例：
 
 ```bash
-node scripts/translate-article-skill.mjs https://x.com/akshay_pachaar/article/2041146899319971922
+SKILL_DIR="/abs/path/to/article-fetch-trans-skill"
+node "$SKILL_DIR/scripts/translate-article-skill.mjs" https://x.com/akshay_pachaar/article/2041146899319971922
 ```
 
 ## 参数说明
 
 ```bash
-node scripts/translate-article-skill.mjs <article-url> [outputFileName] [--baseUrl=http://localhost:3001/v1] [--model=gpt-5-mini] [--timeoutMs=120000]
+node "$SKILL_DIR/scripts/translate-article-skill.mjs" <article-url> [outputFileName] [--baseUrl=http://localhost:3001/v1] [--model=gpt-5-mini] [--timeoutMs=120000]
 ```
 
 - `article-url`：要抓取的文章页面地址
@@ -76,6 +78,18 @@ npx skills add git@github.com:cola-sk/article-fetch-trans-skills.git -g -y
 4. 调用本地 OpenAI 兼容接口翻译
 5. 将翻译内容保存为当前目录下的 Markdown 文件（标题用 `-` 连接）
 
+## 脚本路径说明
+
+- 建议通过 `node <skill_dir>/scripts/translate-article-skill.mjs ...` 运行，避免不同工作目录下相对路径失效。
+- `skill_dir` 一般可取 `SKILL.md` 所在目录。
+
+任意目录执行示例：
+
+```bash
+SKILL_DIR="/abs/path/to/article-fetch-trans-skill"
+node "$SKILL_DIR/scripts/translate-article-skill.mjs" "<article-url>"
+```
+
 ## 常见问题
 
 - 如果出现 `PermissionError: [Errno 1] Operation not permitted`，说明当前执行环境无权访问 `/tmp/bu-*.sock`，需要在可访问本机浏览器会话的权限下重试
@@ -87,7 +101,7 @@ restart_daemon()
 PY
 ```
 - 如果出现 `CDP WS handshake failed: HTTP 403`，打开 `chrome://inspect/#remote-debugging` 并在 Chrome 授权弹窗中点击 `Allow`
-- 如果默认会话反复异常，可切换会话名执行：`BU_NAME=work node scripts/translate-article-skill.mjs <article-url>`
+- 如果默认会话反复异常，可切换会话名执行：`BU_NAME=work node "$SKILL_DIR/scripts/translate-article-skill.mjs" <article-url>`
 - 如果页面提取为空，可提高 `--timeoutMs`（如 `180000`），并确认目标页面在当前登录态下可见正文
 - 如果文件名被识别为通用标题（如 `X.md`），可通过传入 `outputFileName` 指定输出文件名
 - 翻译失败时，请确认 `--baseUrl` 指向可用的本地服务
